@@ -50,3 +50,6 @@ v0.4
 * nfqws2: execution_plan, execution_plan_cancel
 * blockcheck2: fix broken dns cache
 * nfqws2: LUA_COMPAT_VER tracking
+
+v0.5
+* nfqws2: u8add,u16add,u24add,u32add luacalls

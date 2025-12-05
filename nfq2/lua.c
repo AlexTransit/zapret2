@@ -212,6 +212,40 @@ static int luacall_swap16(lua_State *L)
 	lua_pushinteger(L,(u>>8) | ((u&0xFF)<<8));
 	return 1;
 }
+static int lua_uxadd(lua_State *L, uint32_t max)
+{
+	lua_Integer sum=0, v;
+	int argc = lua_gettop(L);
+	for(int i=1;i<=argc;i++)
+	{
+		v = luaL_checkinteger(L,i);
+		if (v>max || v<-(lua_Integer)max) luaL_error(L, "out of range");
+		sum+=v;
+	}
+	lua_pushinteger(L, sum & max);
+	return 1;
+}
+static int luacall_u8add(lua_State *L)
+{
+	lua_check_argc_range(L,"u8add",2,100);
+	return lua_uxadd(L, 0xFF);
+}
+static int luacall_u16add(lua_State *L)
+{
+	lua_check_argc_range(L,"u16add",2,100);
+	return lua_uxadd(L, 0xFFFF);
+}
+static int luacall_u24add(lua_State *L)
+{
+	lua_check_argc_range(L,"u24add",2,100);
+	return lua_uxadd(L, 0xFFFFFF);
+}
+static int luacall_u32add(lua_State *L)
+{
+	lua_check_argc_range(L,"u32add",2,100);
+	return lua_uxadd(L, 0xFFFFFFFF);
+}
+
 static int luacall_swap32(lua_State *L)
 {
 	lua_check_argc(L,"swap32",1);
@@ -2948,6 +2982,11 @@ static void lua_init_functions(void)
 		{"u16",luacall_u16},
 		{"u24",luacall_u24},
 		{"u32",luacall_u32},
+		// add any number of arguments as they would be unsigned int of specific size
+		{"u8add",luacall_u8add},
+		{"u16add",luacall_u16add},
+		{"u24add",luacall_u24add},
+		{"u32add",luacall_u32add},
 		// convert number to blob (string) - big endian
 		{"bu8",luacall_bu8},
 		{"bu16",luacall_bu16},
